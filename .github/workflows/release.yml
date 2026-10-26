@@ -105,3 +105,7 @@ jobs:
           printf '\nhttps://crates.io/crates/pg-fenced-lease/%s\n' "$version" >> notes.md
           gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --verify-tag \
             --title "$TAG" --notes-file notes.md
+
+  verify-published:
+    needs: github-release
+    uses: ./.github/workflows/verify-published.yml

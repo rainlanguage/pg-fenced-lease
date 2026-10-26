@@ -6,6 +6,11 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- `scripts/verify-published.sh` and a CI job that check every published
+  version against its tag.
+
 ## [0.1.0]
 
 ### Added
