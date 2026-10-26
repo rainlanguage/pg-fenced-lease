@@ -6,32 +6,15 @@ Cloud Run with `--min=1 --max=2`, where revisions overlap during a deploy.
 
 ## The principle
 
-A lease alone is not enough. A leader can pause (GC, a frozen VM, a slow
-network), its lease can expire, a new leader can take over, and then the old
-one wakes up and writes. Martin Kleppmann's
+![Unsafe access to a resource protected by a distributed lock](docs/unsafe-lock.png)
+
+![Using fencing tokens to make resource access safe](docs/fencing-tokens.png)
+
+Diagrams from Martin Kleppmann,
 [How to do distributed locking](https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html)
-explains why, and the fix: a **fencing token** that grows on every takeover,
-checked by the storage on every write. Chubby calls it a sequencer.
-
-Here the storage is the same Postgres database that holds the lease, so the
-check runs inside the writer's own transaction:
-
-1. **Lease row**: `name`, `holder`, `epoch`, `expires_at`. Time always comes
-   from the database clock. River (`river_leader`), Oban (`oban_peers`) and
-   ShedLock (`lock_until`) keep their leases the same way.
-2. **Acquire**: take the row if it is missing or expired, and add 1 to
-   `epoch`. The epoch is the fencing token.
-3. **Renew** every TTL/3, matching holder and epoch. No match means someone
-   took over: the job is cancelled at once.
-4. **Fence**: inside the write transaction, lock the lease row and check
-   holder, epoch and expiry. A stale leader's write fails and can never
-   commit.
-5. **Release** on a clean finish by expiring the row, so the standby takes
-   over at once.
-
-The fence takes `FOR KEY SHARE`, so a leader's own writes never block its
-renewals. A takeover needs `FOR UPDATE`, so it waits until the old leader's
-open writes finish.
+(2016), under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).
+In this crate, the lock service and the storage are the same Postgres
+database, and the token is the lease row's `epoch`.
 
 ## Use
 
