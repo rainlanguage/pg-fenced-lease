@@ -1,5 +1,10 @@
 # pg-fenced-lease
 
+[![CI](https://github.com/rainlanguage/pg-fenced-lease/actions/workflows/ci.yml/badge.svg)](https://github.com/rainlanguage/pg-fenced-lease/actions/workflows/ci.yml)
+[![crates.io](https://img.shields.io/crates/v/pg-fenced-lease.svg)](https://crates.io/crates/pg-fenced-lease)
+[![docs.rs](https://img.shields.io/docsrs/pg-fenced-lease)](https://docs.rs/pg-fenced-lease)
+[![License](https://img.shields.io/crates/l/pg-fenced-lease.svg)](#license)
+
 One owner per background job across instances, for Rust services on
 Postgres and sqlx. Built for setups that run two copies at once, such as
 Cloud Run with `--min=1 --max=2`, where revisions overlap during a deploy.
@@ -20,7 +25,7 @@ database, and the token is the lease row's `epoch`.
 
 ```toml
 [dependencies]
-pg-fenced-lease = { git = "https://github.com/rainlanguage/pg-fenced-lease" }
+pg-fenced-lease = "0.1"
 # features = ["any"] for sqlx::AnyPool
 # The crate brings no sqlx runtime; your own sqlx line must enable one.
 sqlx = { version = "0.8", features = ["runtime-tokio", "postgres"] }
@@ -71,3 +76,12 @@ refused after a takeover, a stolen lease cancelling the job, renewals going
 through while the leader has a write open, a takeover waiting for the old
 leader's open write, spawned tasks, and the `Any` driver. CI runs them on
 Postgres 14 and 17.
+
+## License
+
+Licensed under either of [Apache License, Version 2.0](LICENSE-APACHE) or
+[MIT license](LICENSE-MIT) at your option.
+
+Unless you explicitly state otherwise, any contribution you submit for
+inclusion in this crate, as defined in the Apache-2.0 license, is dual
+licensed as above, without any additional terms or conditions.

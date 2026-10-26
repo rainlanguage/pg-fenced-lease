@@ -7,6 +7,8 @@ description = "One owner per background job across instances: a lease row in Pos
 license = "MIT OR Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/rainlanguage/pg-fenced-lease"
+documentation = "https://docs.rs/pg-fenced-lease"
+include = ["src/**", "README.md", "CHANGELOG.md", "LICENSE-*"]
 keywords = ["postgres", "sqlx", "lease", "leader-election", "fencing"]
 categories = ["database", "asynchronous"]
 
@@ -16,6 +18,9 @@ default = ["postgres"]
 postgres = ["sqlx/postgres"]
 # Work with `sqlx::AnyPool` pointed at Postgres.
 any = ["sqlx/any", "sqlx/postgres"]
+
+[package.metadata.docs.rs]
+all-features = true
 
 [dependencies]
 # No runtime or TLS features here, so the caller's choice wins when Cargo
