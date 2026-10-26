@@ -57,11 +57,25 @@ jobs:
       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master 2026-10-16
         with:
           toolchain: stable
+      # The first version of a crate must be published by hand; crates.io
+      # only allows trusted publishing after that. Skip if it is already up.
+      - name: Already on crates.io?
+        id: published
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          if curl -sf -A "github.com/${GITHUB_REPOSITORY} release" \
+              "https://crates.io/api/v1/crates/pg-fenced-lease/${TAG#v}" >/dev/null; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
       # Trusted publishing: crates.io trusts this repo, workflow and
       # environment, so no long-lived token is stored.
       - uses: rust-lang/crates-io-auth-action@3268eb413133e2960fa4ae0e963ca76380c54cd9 # v1.0.6
+        if: steps.published.outputs.skip != 'true'
         id: auth
       - name: Publish to crates.io
+        if: steps.published.outputs.skip != 'true'
         env:
           CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
         run: cargo publish --locked

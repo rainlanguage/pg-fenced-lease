@@ -25,3 +25,10 @@ that fails without it. Add a line under `[Unreleased]` in `CHANGELOG.md`.
 3. Tag the merge commit `vX.Y.Z` and push the tag. The release workflow
    checks that the tag matches `Cargo.toml`, runs the tests, publishes to
    crates.io, and creates the GitHub release from the changelog section.
+
+The first version of a new crate cannot use trusted publishing. For
+`0.1.0`, an owner runs `cargo publish` from the tagged commit, then adds a
+trusted publisher on crates.io (repository `rainlanguage/pg-fenced-lease`,
+workflow `release.yml`, environment `crates-io`). Pushing the tag after
+that still creates the GitHub release; the workflow skips a version that
+is already on crates.io.
