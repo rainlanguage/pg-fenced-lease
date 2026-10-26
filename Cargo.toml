@@ -1,0 +1,45 @@
+[package]
+name = "pg-fenced-lease"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+description = "One owner per background job across instances: a lease row in Postgres with an epoch fencing token checked inside every write transaction."
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/rainlanguage/pg-fenced-lease"
+keywords = ["postgres", "sqlx", "lease", "leader-election", "fencing"]
+categories = ["database", "asynchronous"]
+
+[features]
+default = ["postgres"]
+# Work with `sqlx::PgPool` and `sqlx::Transaction<'_, Postgres>`.
+postgres = ["sqlx/postgres"]
+# Work with `sqlx::AnyPool` pointed at Postgres.
+any = ["sqlx/any", "sqlx/postgres"]
+
+[dependencies]
+# No runtime or TLS features here, so the caller's choice wins when Cargo
+# unifies features. The caller must enable a sqlx tokio runtime feature.
+sqlx = { version = "0.8", default-features = false }
+thiserror = "2"
+tokio = { version = "1", features = ["macros", "time", "rt"] }
+tracing = "0.1"
+
+[dev-dependencies]
+sqlx = { version = "0.8", default-features = false, features = ["runtime-tokio", "postgres", "any"] }
+tokio = { version = "1", features = ["full"] }
+url = "2.5"
+
+[lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+
+[lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+indexing_slicing = "deny"
+pedantic = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+missing_errors_doc = "allow"
+must_use_candidate = "allow"
