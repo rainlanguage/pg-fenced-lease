@@ -150,7 +150,7 @@ impl Config {
         }
         if self.renew_interval.is_zero()
             || self.retry_interval.is_zero()
-            || self.renew_interval * 2 > self.ttl
+            || self.renew_interval > self.ttl / 2
         {
             return Err(Error::InvalidConfig(format!(
                 "renew_interval {:?} must be non-zero and at most half of ttl {:?}",
@@ -560,6 +560,11 @@ mod tests {
             ..Config::default()
         };
         assert!(slow.validate().is_err());
+        let huge = Config {
+            renew_interval: Duration::MAX,
+            ..Config::default()
+        };
+        assert!(huge.validate().is_err());
     }
 
     #[test]

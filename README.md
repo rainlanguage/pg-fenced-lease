@@ -22,6 +22,8 @@ database, and the token is the lease row's `epoch`.
 [dependencies]
 pg-fenced-lease = { git = "https://github.com/rainlanguage/pg-fenced-lease" }
 # features = ["any"] for sqlx::AnyPool
+# The crate brings no sqlx runtime; your own sqlx line must enable one.
+sqlx = { version = "0.8", features = ["runtime-tokio", "postgres"] }
 ```
 
 ```rust
