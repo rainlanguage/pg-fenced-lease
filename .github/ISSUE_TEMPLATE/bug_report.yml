@@ -1,0 +1,23 @@
+name: Bug report
+description: Something does not work as documented
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      description: A test or a sequence of steps, if you have one.
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Crate version, sqlx version, Postgres version.
+    validations:
+      required: true
